@@ -3,7 +3,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { StyleSheet, Text, View } from "react-native";
 
 import SplashScreen from "./Ingress/splash";
-import LoginPhone from "./Ingress/login";
+import Login from "./Ingress/login";
+import SignUpPage from "./Ingress/SignUp";
+import LoginPhone from "./Ingress/loginPhone";
+import LoginGoogle from "./Ingress/loginGoogle";
 
 const Stack = createStackNavigator();
 
@@ -12,7 +15,10 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="splash" component={SplashScreen} />
+        <Stack.Screen name="LoginEmail" component={Login} />
         <Stack.Screen name="LoginPhone" component={LoginPhone} />
+        <Stack.Screen name="LoginGoogle" component={LoginGoogle} />
+        <Stack.Screen name="SignUp" component={SignUpPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

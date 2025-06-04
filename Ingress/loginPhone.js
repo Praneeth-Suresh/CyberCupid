@@ -10,16 +10,16 @@ import {
 } from "react-native";
 import logo from "../assets/logo.png";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import * as yup from "yup";
 // import { useAuth } from "../auth/authContext"; // Change this in the future to support real authentication
 
+// 1. Validation: Use phone number instead of email
 const loginValidationSchema = yup.object().shape({
-  email: yup
+  phone: yup
     .string()
-    .email("Please enter a valid email")
-    .required("Email is required"),
+    .matches(/^\+?\d{8,15}$/, "Please enter a valid phone number")
+    .required("Phone number is required"),
   password: yup
     .string()
     .min(6, ({ min }) => `Password must be at least ${min} characters`)
@@ -30,7 +30,7 @@ const submit = (args) => {
   console.log(args);
 };
 
-export default function Login({ navigation }) {
+export default function LoginPhone({ navigation }) {
   // const { token, user, saveToken, saveUser } = useAuth();
 
   return (
@@ -39,7 +39,7 @@ export default function Login({ navigation }) {
       <Text style={styles.title}>Login</Text>
       <Formik
         validationSchema={loginValidationSchema}
-        initialValues={{ email: "", password: "" }}
+        initialValues={{ phone: "", password: "" }} // 2. Use phone instead of email
         onSubmit={submit}
       >
         {({
@@ -53,18 +53,18 @@ export default function Login({ navigation }) {
         }) => (
           <>
             <View style={styles.inputContainer}>
-              <Icon name="mail-outline" size={25} style={styles.icon} />
+              <Icon name="call-outline" size={25} style={styles.icon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                value={values.email}
+                placeholder="Phone number"
+                keyboardType="phone-pad" // 3. Use phone-pad keyboard
+                onChangeText={handleChange("phone")}
+                onBlur={handleBlur("phone")}
+                value={values.phone}
               />
             </View>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
+            {errors.phone && touched.phone && (
+              <Text style={styles.errorText}>{errors.phone}</Text>
             )}
             <View style={styles.inputContainer}>
               <Icon name="lock-closed-outline" size={25} style={styles.icon} />

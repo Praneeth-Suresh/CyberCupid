@@ -35,31 +35,30 @@ const FadeInView = props => {
 
 
 
-export default function SplashScreen() {
+export default function SplashScreen({ navigation }) {
   return (
     <LinearGradient
       colors={[colors.primaryDark, colors.primaryLight]}
       style={styles.container}
     >
+      <View style={styles.container}>
+        <Image
+          source={require("../assets/logo.png")} // Reference the local image
+          style={styles.image}
+        />
+      </View>
 
-    <View style={styles.container}>
-    <Image
-    source={require('../assets/logo.png')} // Reference the local image
-    style={styles.image}
-    />
-    </View>
-
-    <View style={styles.bottomSection}>
-      <FadeInView
-      style={{
-          width: '100%',
-          height: 50,
-          backgroundColor: 'powderblue',
-      }}>
-        <LoginScreen/>
-      </FadeInView>
-    </View>
-
+      <View style={styles.bottomSection}>
+        <FadeInView
+          style={{
+            width: "110%",
+            height: 50,
+            backgroundColor: "transparent",
+          }}
+        >
+          <LoginScreen navigation={navigation} />
+        </FadeInView>
+      </View>
     </LinearGradient>
   );
 }
