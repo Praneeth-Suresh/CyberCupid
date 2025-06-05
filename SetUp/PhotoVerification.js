@@ -1,40 +1,40 @@
-"use client"
-
-import React, { useState, useRef } from "react"
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, StatusBar, Alert } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Camera } from "expo-camera"
-import { Ionicons } from "@expo/vector-icons"
+import React, { useRef, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  Alert,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PhotoVerification({ navigation }) {
-  const [hasPermission, setHasPermission] = useState(null)
-  const [cameraReady, setCameraReady] = useState(false)
-  const cameraRef = useRef(null)
+  const [facing, setFacing] = useState(CameraType.back);
+  const [cameraPermission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef(null);
 
-  React.useEffect(() => {
-    ;(async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync()
-      setHasPermission(status === "granted")
-    })()
-  }, [])
-
+  // Take picture handler (CameraView does not expose takePictureAsync directly, so you may need to use ref with imperative handle)
   const takePicture = async () => {
-    if (cameraRef.current && cameraReady) {
+    if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync({
           quality: 0.8,
           base64: false,
-        })
-
-        // Here you would typically process the photo for verification
-        Alert.alert("Photo Captured", "Identity verification photo taken successfully!", [
-          { text: "OK", onPress: () => navigation.navigate("PrivacyNotice") },
-        ])
+        });
+        Alert.alert(
+          "Photo Captured",
+          "Identity verification photo taken successfully!",
+          [{ text: "OK", onPress: () => navigation.navigate("PrivacyNotice") }]
+        );
       } catch (error) {
-        Alert.alert("Error", "Failed to take photo. Please try again.")
+        Alert.alert("Error", "Failed to take photo. Please try again.");
       }
     }
-  }
+  };
 
   const GuidelineItem = ({ icon, text, color }) => (
     <View style={styles.guidelineItem}>
@@ -43,59 +43,61 @@ export default function PhotoVerification({ navigation }) {
       </View>
       <Text style={styles.guidelineText}>{text}</Text>
     </View>
-  )
+  );
 
-  if (hasPermission === null) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.centerContent}>
-          <Text>Requesting camera permission...</Text>
-        </View>
-      </SafeAreaView>
-    )
+  if (!cameraPermission) {
+    // Permissions are still loading
+    return <View />;
   }
 
-  if (hasPermission === false) {
+  if (!cameraPermission.granted) {
+    // Permissions not granted yet
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContent}>
-          <Text style={styles.errorText}>Camera access is required for identity verification</Text>
-          <TouchableOpacity style={styles.permissionButton} onPress={() => Camera.requestCameraPermissionsAsync()}>
+          <Text style={styles.errorText}>
+            Camera access is required for identity verification
+          </Text>
+          <TouchableOpacity
+            style={styles.permissionButton}
+            onPress={requestPermission}
+          >
             <Text style={styles.permissionButtonText}>Grant Permission</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-    )
+    );
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-
       <View style={styles.content}>
         <Text style={styles.title}>Verify your Identity</Text>
-
         <View style={styles.cameraContainer}>
-          <Camera
+          <CameraView
             ref={cameraRef}
             style={styles.camera}
-            type={Camera.Constants.Type.front}
-            onCameraReady={() => setCameraReady(true)}
-          />
-          <View style={styles.cameraOverlay}>
-            <View style={styles.captureCircle} />
-          </View>
+            facing={facing}
+            enableTorch={false}
+          >
+            <View style={styles.cameraOverlay}>
+              <View style={styles.captureCircle} />
+            </View>
+          </CameraView>
         </View>
-
         <View style={styles.guidelinesContainer}>
           <View style={styles.guidelines}>
             <GuidelineItem icon="person" text="Clear face" color="#10B981" />
-            <GuidelineItem icon="glasses" text="No sunglasses" color="#EF4444" />
+            <GuidelineItem
+              icon="glasses"
+              text="No sunglasses"
+              color="#EF4444"
+            />
             <GuidelineItem icon="people" text="No group" color="#EF4444" />
           </View>
         </View>
       </View>
-
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={takePicture}>
           <LinearGradient
@@ -109,7 +111,7 @@ export default function PhotoVerification({ navigation }) {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -219,4 +221,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-})
+});
