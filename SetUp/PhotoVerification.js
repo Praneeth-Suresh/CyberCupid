@@ -13,7 +13,7 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function PhotoVerification({ navigation }) {
-  const [facing, setFacing] = useState(CameraType.back);
+  // const [facing, setFacing] = useState(CameraType.back);
   const [cameraPermission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
 
@@ -75,7 +75,7 @@ export default function PhotoVerification({ navigation }) {
       <View style={styles.content}>
         <Text style={styles.title}>Verify your Identity</Text>
         <View style={styles.cameraContainer}>
-          <CameraView
+          {/* <CameraView
             ref={cameraRef}
             style={styles.camera}
             facing={facing}
@@ -84,7 +84,18 @@ export default function PhotoVerification({ navigation }) {
             <View style={styles.cameraOverlay}>
               <View style={styles.captureCircle} />
             </View>
-          </CameraView>
+          </CameraView> */}
+          <Text style={styles.title}>
+            Oops... expo-camera doesn't seem to be working
+          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("PrivacyNotice")}
+          >
+            <Text>
+              It seems that CameraType can't be imported. Huh. Anyway, click
+              here to move ahead.
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.guidelinesContainer}>
           <View style={styles.guidelines}>

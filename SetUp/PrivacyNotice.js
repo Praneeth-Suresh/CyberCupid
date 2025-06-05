@@ -5,7 +5,7 @@ export default function PrivacyNotice({ navigation }) {
   const handleAccept = () => {
     // Navigate to main app or complete signup
     console.log("User accepted privacy notice")
-    // navigation.navigate('MainApp'); // Uncomment when you have main app
+    navigation.navigate("MainApp");
   }
 
   return (

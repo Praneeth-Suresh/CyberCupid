@@ -4,8 +4,9 @@ import Preferences from "./Preferences";
 import PhotoUpload from "./PhotoUpload";
 import PhotoVerification from "./PhotoVerification";
 import PrivacyNotice from "./PrivacyNotice";
+import MainApp from "../MainApp/MainAppNav";
 
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 export default function SetUp() {
   return (
@@ -14,6 +15,7 @@ export default function SetUp() {
       <Stack.Screen name="PhotoUpload" component={PhotoUpload} />
       <Stack.Screen name="PhotoVerification" component={PhotoVerification} />
       <Stack.Screen name="PrivacyNotice" component={PrivacyNotice} />
+      <Stack.Screen name="MainApp" component={MainApp} />
     </Stack.Navigator>
-  )
+  );
 }
