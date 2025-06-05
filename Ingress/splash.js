@@ -3,15 +3,16 @@ import { Animated, View, Text, TouchableOpacity, StyleSheet, StatusBar as Native
 import { Svg, Path, Circle } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient'; // Or from 'react-native-linear-gradient'
 import LoginScreen from './loginOptions';
+import PurpleWrapper from "../assets/PurpleBg";
 
 const colors = {
-  primaryDark: '#7512b2',
-  primaryLight: '#bd94d7',
-  white: '#ffffff',
-  black: '#000000',
+  primaryDark: "#7512b2",
+  primaryLight: "#bd94d7",
+  white: "#ffffff",
+  black: "#000000",
 };
 
-const FadeInView = props => {
+const FadeInView = (props) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
   useEffect(() => {
@@ -27,20 +28,16 @@ const FadeInView = props => {
       style={{
         ...props.style,
         opacity: fadeAnim, // Bind opacity to animated value
-      }}>
+      }}
+    >
       {props.children}
     </Animated.View>
   );
 };
 
-
-
 export default function SplashScreen({ navigation }) {
   return (
-    <LinearGradient
-      colors={[colors.primaryDark, colors.primaryLight]}
-      style={styles.container}
-    >
+    <PurpleWrapper>
       <View style={styles.container}>
         <Image
           source={require("../assets/logo.png")} // Reference the local image
@@ -59,7 +56,7 @@ export default function SplashScreen({ navigation }) {
           <LoginScreen navigation={navigation} />
         </FadeInView>
       </View>
-    </LinearGradient>
+    </PurpleWrapper>
   );
 }
 

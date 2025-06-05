@@ -7,6 +7,7 @@ import Login from "./Ingress/login";
 import SignUpPage from "./Ingress/SignUp";
 import LoginPhone from "./Ingress/loginPhone";
 import LoginGoogle from "./Ingress/loginGoogle";
+import SetUp from "./SetUp/SetUpHome";
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name="LoginPhone" component={LoginPhone} />
         <Stack.Screen name="LoginGoogle" component={LoginGoogle} />
         <Stack.Screen name="SignUp" component={SignUpPage} />
+        <Stack.Screen name="SetUp" component={SetUp} />
       </Stack.Navigator>
     </NavigationContainer>
   );

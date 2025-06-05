@@ -85,7 +85,7 @@ export default function Login({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={handleSubmit}
+              onPress={() => navigation.navigate("SetUp")}
               disabled={!isValid}
             >
               <Text style={styles.buttonText}>Login</Text>
