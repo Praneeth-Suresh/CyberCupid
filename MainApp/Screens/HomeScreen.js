@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,17 +8,26 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
-  Animated,
-  PanGestureHandler,
   Dimensions,
   Modal,
-} from "react-native"
-import { GestureHandlerRootView, State } from "react-native-gesture-handler"
-import { Ionicons } from "@expo/vector-icons"
-import { LinearGradient } from "expo-linear-gradient"
-import Slider from "@react-native-community/slider"
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import Slider from "@react-native-community/slider";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  runOnJS,
+  interpolate,
+} from "react-native-reanimated";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const profiles = [
   {
@@ -26,154 +35,126 @@ const profiles = [
     name: "Rex",
     age: 27,
     distance: "5 miles",
-    image: "/images/profile1.jpg",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHp5a0vcJ0p4yRgrTNdVO3wtf8tX1dXNvPlQ&s",
   },
   {
     id: 2,
     name: "Alex",
     age: 24,
     distance: "7 miles",
-    image: "/images/profile2.jpg",
+    image:
+      "https://st2.depositphotos.com/1499736/7026/i/950/depositphotos_70267833-stock-photo-young-man-posing-sideways.jpg",
   },
   {
     id: 3,
     name: "John",
     age: 24,
     distance: "7 miles",
-    image: "/images/profile3.jpg",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ26gTRTIBn2hN_l4qGFY6xv07qiol3vx7N5g&s",
   },
   {
     id: 4,
     name: "Mike",
     age: 29,
     distance: "3 miles",
-    image: "/images/profile4.jpg",
+    image:
+      "https://st.depositphotos.com/1499736/4967/i/950/depositphotos_49670737-stock-photo-man-posing-with-hands-on.jpg",
   },
-]
+];
 
 export default function HomeScreen() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [showFilter, setShowFilter] = useState(false)
-  const [selectedGender, setSelectedGender] = useState("Male")
-  const [ageRange, setAgeRange] = useState([22, 34])
-  const [distance, setDistance] = useState("0 km-10 km")
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showFilter, setShowFilter] = useState(false);
+  const [selectedGender, setSelectedGender] = useState("Male");
+  const [ageRange, setAgeRange] = useState([22, 34]);
+  const [distance, setDistance] = useState("0 km-10 km");
 
-  const translateX = useRef(new Animated.Value(0)).current
-  const translateY = useRef(new Animated.Value(0)).current
-  const rotate = useRef(new Animated.Value(0)).current
-  const opacity = useRef(new Animated.Value(1)).current
+  // Reanimated shared values
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const opacity = useSharedValue(1);
 
-  const onGestureEvent = Animated.event([{ nativeEvent: { translationX: translateX, translationY: translateY } }], {
-    useNativeDriver: true,
-  })
+  const nextProfile = () => {
+    setCurrentIndex((prev) => (prev + 1) % profiles.length);
+    translateX.value = 0;
+    translateY.value = 0;
+    opacity.value = 1;
+  };
 
-  const onHandlerStateChange = (event) => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
-      const { translationX } = event.nativeEvent
-      const threshold = screenWidth * 0.3
-
-      if (Math.abs(translationX) > threshold) {
-        // Swipe animation
-        Animated.parallel([
-          Animated.timing(translateX, {
-            toValue: translationX > 0 ? screenWidth : -screenWidth,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ]).start(() => {
-          // Reset and move to next card
-          setCurrentIndex((prev) => (prev + 1) % profiles.length)
-          translateX.setValue(0)
-          translateY.setValue(0)
-          rotate.setValue(0)
-          opacity.setValue(1)
-        })
+  // Gesture handler using new Gesture API
+  const gesture = Gesture.Pan()
+    .onUpdate((event) => {
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+    })
+    .onEnd((event) => {
+      const threshold = screenWidth * 0.3;
+      if (Math.abs(event.translationX) > threshold) {
+        // Swipe away
+        translateX.value = withSpring(
+          event.translationX > 0 ? screenWidth : -screenWidth,
+          {},
+          () => {
+            runOnJS(nextProfile)();
+          }
+        );
+        opacity.value = withSpring(0);
       } else {
         // Snap back
-        Animated.parallel([
-          Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-          }),
-          Animated.spring(translateY, {
-            toValue: 0,
-            useNativeDriver: true,
-          }),
-          Animated.spring(rotate, {
-            toValue: 0,
-            useNativeDriver: true,
-          }),
-        ]).start()
+        translateX.value = withSpring(0);
+        translateY.value = withSpring(0);
       }
-    }
-  }
+    });
 
+  // Animated styles for the card
+  const animatedCardStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      {
+        rotate: `${(translateX.value / (screenWidth / 2)) * 10}deg`,
+      },
+    ],
+    opacity: opacity.value,
+  }));
+
+  // Like/Reject overlay opacities using interpolate from reanimated
+  const likeOverlayStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      translateX.value,
+      [0, screenWidth / 4],
+      [0, 1],
+      "clamp"
+    ),
+  }));
+
+  const rejectOverlayStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      translateX.value,
+      [-screenWidth / 4, 0],
+      [1, 0],
+      "clamp"
+    ),
+  }));
+
+  // Handle Like/Reject button presses with reanimated
   const handleLike = () => {
-    Animated.parallel([
-      Animated.timing(translateX, {
-        toValue: screenWidth,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setCurrentIndex((prev) => (prev + 1) % profiles.length)
-      translateX.setValue(0)
-      translateY.setValue(0)
-      rotate.setValue(0)
-      opacity.setValue(1)
-    })
-  }
+    translateX.value = withSpring(screenWidth, {}, () => {
+      runOnJS(nextProfile)();
+    });
+    opacity.value = withSpring(0);
+  };
 
   const handleReject = () => {
-    Animated.parallel([
-      Animated.timing(translateX, {
-        toValue: -screenWidth,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setCurrentIndex((prev) => (prev + 1) % profiles.length)
-      translateX.setValue(0)
-      translateY.setValue(0)
-      rotate.setValue(0)
-      opacity.setValue(1)
-    })
-  }
+    translateX.value = withSpring(-screenWidth, {}, () => {
+      runOnJS(nextProfile)();
+    });
+    opacity.value = withSpring(0);
+  };
 
-  const rotateInterpolate = translateX.interpolate({
-    inputRange: [-screenWidth / 2, 0, screenWidth / 2],
-    outputRange: ["-10deg", "0deg", "10deg"],
-    extrapolate: "clamp",
-  })
-
-  const likeOpacity = translateX.interpolate({
-    inputRange: [0, screenWidth / 4],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  })
-
-  const rejectOpacity = translateX.interpolate({
-    inputRange: [-screenWidth / 4, 0],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
-  })
-
-  const currentProfile = profiles[currentIndex]
+  const currentProfile = profiles[currentIndex];
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -182,55 +163,61 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <View style={styles.logoIcon}>
-              <LinearGradient colors={["#8B5CF6", "#A855F7"]} style={styles.logoGradient}>
+              <LinearGradient
+                colors={["#8B5CF6", "#A855F7"]}
+                style={styles.logoGradient}
+              >
                 <Text style={styles.logoSymbol}>{"<>"}</Text>
               </LinearGradient>
             </View>
             <Text style={styles.logoText}>CyberCupid</Text>
           </View>
-          <TouchableOpacity onPress={() => setShowFilter(true)} style={styles.filterButton}>
+          <TouchableOpacity
+            onPress={() => setShowFilter(true)}
+            style={styles.filterButton}
+          >
             <Ionicons name="filter" size={24} color="#666" />
           </TouchableOpacity>
         </View>
 
         {/* Card Container */}
         <View style={styles.cardContainer}>
-          <PanGestureHandler onGestureEvent={onGestureEvent} onHandlerStateChange={onHandlerStateChange}>
-            <Animated.View
-              style={[
-                styles.card,
-                {
-                  transform: [{ translateX }, { translateY }, { rotate: rotateInterpolate }],
-                  opacity,
-                },
-              ]}
-            >
-              <Image source={{ uri: currentProfile.image }} style={styles.cardImage} />
+          <GestureDetector gesture={gesture}>
+            <Animated.View style={[styles.card, animatedCardStyle]}>
+              <Image
+                source={{ uri: currentProfile.image }}
+                style={styles.cardImage}
+              />
 
               {/* Overlay Icons */}
-              <Animated.View style={[styles.likeOverlay, { opacity: likeOpacity }]}>
+              <Animated.View style={[styles.likeOverlay, likeOverlayStyle]}>
                 <View style={styles.likeIcon}>
                   <Ionicons name="heart" size={60} color="#8B5CF6" />
                 </View>
               </Animated.View>
 
-              <Animated.View style={[styles.rejectOverlay, { opacity: rejectOpacity }]}>
+              <Animated.View style={[styles.rejectOverlay, rejectOverlayStyle]}>
                 <View style={styles.rejectIcon}>
                   <Ionicons name="close" size={60} color="#EF4444" />
                 </View>
               </Animated.View>
 
               {/* Profile Info */}
-              <LinearGradient colors={["transparent", "rgba(0,0,0,0.8)"]} style={styles.cardGradient}>
+              <LinearGradient
+                colors={["transparent", "rgba(0,0,0,0.8)"]}
+                style={styles.cardGradient}
+              >
                 <View style={styles.cardInfo}>
                   <Text style={styles.cardName}>
                     {currentProfile.name}, {currentProfile.age}
                   </Text>
-                  <Text style={styles.cardDistance}>{currentProfile.distance}</Text>
+                  <Text style={styles.cardDistance}>
+                    {currentProfile.distance}
+                  </Text>
                 </View>
               </LinearGradient>
             </Animated.View>
-          </PanGestureHandler>
+          </GestureDetector>
         </View>
 
         {/* Action Buttons */}
@@ -272,11 +259,19 @@ export default function HomeScreen() {
                     {["Male", "Female", "Bisexual"].map((gender) => (
                       <TouchableOpacity
                         key={gender}
-                        style={[styles.genderButton, selectedGender === gender && styles.genderButtonActive]}
+                        style={[
+                          styles.genderButton,
+                          selectedGender === gender &&
+                            styles.genderButtonActive,
+                        ]}
                         onPress={() => setSelectedGender(gender)}
                       >
                         <Text
-                          style={[styles.genderButtonText, selectedGender === gender && styles.genderButtonTextActive]}
+                          style={[
+                            styles.genderButtonText,
+                            selectedGender === gender &&
+                              styles.genderButtonTextActive,
+                          ]}
                         >
                           {gender}
                         </Text>
@@ -295,7 +290,9 @@ export default function HomeScreen() {
                         minimumValue={18}
                         maximumValue={50}
                         value={ageRange[0]}
-                        onValueChange={(value) => setAgeRange([Math.round(value), ageRange[1]])}
+                        onValueChange={(value) =>
+                          setAgeRange([Math.round(value), ageRange[1]])
+                        }
                         minimumTrackTintColor="#8B5CF6"
                         maximumTrackTintColor="#E5E5E5"
                         thumbStyle={styles.sliderThumb}
@@ -305,7 +302,9 @@ export default function HomeScreen() {
                         minimumValue={18}
                         maximumValue={50}
                         value={ageRange[1]}
-                        onValueChange={(value) => setAgeRange([ageRange[0], Math.round(value)])}
+                        onValueChange={(value) =>
+                          setAgeRange([ageRange[0], Math.round(value)])
+                        }
                         minimumTrackTintColor="#8B5CF6"
                         maximumTrackTintColor="#E5E5E5"
                         thumbStyle={styles.sliderThumb}
@@ -320,7 +319,7 @@ export default function HomeScreen() {
         </Modal>
       </SafeAreaView>
     </GestureHandlerRootView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -593,4 +592,4 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-})
+});

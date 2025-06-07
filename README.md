@@ -1,4 +1,6 @@
-# CyberCupid: SECURE HEARTS. REAL CONNECTIONS.
+# CyberCupid
+
+SECURE HEARTS. REAL CONNECTIONS.
 
 ## Getting started
 

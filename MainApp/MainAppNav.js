@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationIndependentTree } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
@@ -12,7 +12,7 @@ const Tab = createBottomTabNavigator();
 
 export default function MainApp() {
   return (
-    <NavigationContainer>
+    <NavigationIndependentTree>
       <StatusBar style="dark" />
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -49,6 +49,6 @@ export default function MainApp() {
         <Tab.Screen name="Messages" component={MessagesScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
-    </NavigationContainer>
+    </NavigationIndependentTree>
   );
 }
