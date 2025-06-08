@@ -162,15 +162,10 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <View style={styles.logoIcon}>
-              <LinearGradient
-                colors={["#8B5CF6", "#A855F7"]}
-                style={styles.logoGradient}
-              >
-                <Text style={styles.logoSymbol}>{"<>"}</Text>
-              </LinearGradient>
-            </View>
-            <Text style={styles.logoText}>CyberCupid</Text>
+            <Image
+              source={require("../../assets/logo_home.png")} // Reference the local image
+              style={styles.image}
+            />
           </View>
           <TouchableOpacity
             onPress={() => setShowFilter(true)}
@@ -338,6 +333,11 @@ const styles = StyleSheet.create({
   logoContainer: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  image: {
+    width: 200, // Adjust as needed
+    height: 50, // Adjust as needed
+    position: "absolute",
   },
   logoIcon: {
     marginRight: 8,
