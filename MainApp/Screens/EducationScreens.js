@@ -1,62 +1,96 @@
 "use client"
 
 import { useState } from "react"
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Linking } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Ionicons } from "@expo/vector-icons"
-import SecurityDashGame from "./GameComponents/SecurityDashGame"
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+  Image,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import SecurityDashGame from "./GameComponents/SecurityDashGame";
 
 export default function EducationScreen() {
-  const [showGame, setShowGame] = useState(false)
+  const [showGame, setShowGame] = useState(false);
 
   const openKaspersky = () => {
-    Linking.openURL("https://www.kaspersky.com/")
-  }
+    Linking.openURL("https://www.kaspersky.com/");
+  };
 
   const startGame = () => {
-    setShowGame(true)
-  }
+    setShowGame(true);
+  };
 
   const closeGame = () => {
-    setShowGame(false)
-  }
+    setShowGame(false);
+  };
 
   if (showGame) {
-    return <SecurityDashGame onClose={closeGame} />
+    return <SecurityDashGame onClose={closeGame} />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
           <Text style={styles.title}>Learn with CyberCupid</Text>
 
           {/* Daily Tip Card */}
-          <TouchableOpacity style={styles.card} onPress={openKaspersky}>
-            <LinearGradient colors={["#8B5CF6", "#A855F7"]} style={styles.dailyTipCard}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              Linking.openURL(
+                "https://www.csa.gov.sg/our-programmes/cybersecurity-outreach/cybersecurity-campaigns/the-unseen-enemy-campaign/beware-of-phishing-scams"
+              );
+            }}
+          >
+            <LinearGradient
+              colors={["#8B5CF6", "#A855F7"]}
+              style={styles.dailyTipCard}
+            >
               <Text style={styles.cardTitle}>Your Daily Tip</Text>
               <Text style={styles.cardSubtitle}>
-                Email check don't click - verify first. Staying alert is your first defense.
+                <Text style={{ fontWeight: "bold" }}>
+                  1 in 10 people click phishing links 🎣
+                </Text>{" "}
+                — Be the fish that swims away. CHECK SENDER DETAILS!
               </Text>
               <Text style={styles.cardDescription}>
-                Phishing scams can be more convincing than ever. Always verify the sender before clicking any links or
-                downloading attachments.
+                Phishing scams can be more convincing than ever. Always verify
+                the sender before clicking any links or downloading attachments.
+              </Text>
+              <Text style={styles.cardDescription}>
+                Remember, Clicking without verifying could cost you $1,000 or
+                your identity.
               </Text>
               <View style={styles.tipIcon}>
-                <Ionicons name="bulb" size={24} color="rgba(255,255,255,0.8)" />
+                <Ionicons name="bulb" size={30} color="rgba(255,255,255,0.8)" />
               </View>
             </LinearGradient>
           </TouchableOpacity>
 
           {/* Security Dash Card */}
           <TouchableOpacity style={styles.card} onPress={startGame}>
-            <LinearGradient colors={["#06B6D4", "#0891B2"]} style={styles.securityDashCard}>
+            <LinearGradient
+              colors={["#06B6D4", "#0891B2"]}
+              style={styles.securityDashCard}
+            >
               <Text style={styles.cardTitle}>Up for some...</Text>
               <Text style={styles.gameTitle}>Security dash?</Text>
               <View style={styles.gamePreview}>
                 <View style={styles.gameElement} />
                 <View style={[styles.gameElement, styles.gameElementCircle]} />
-                <View style={[styles.gameElement, styles.gameElementTriangle]} />
+                <View
+                  style={[styles.gameElement, styles.gameElementTriangle]}
+                />
                 <View style={[styles.gameElement, styles.gameElementPlayer]} />
               </View>
               <View style={styles.playIcon}>
@@ -65,21 +99,80 @@ export default function EducationScreen() {
             </LinearGradient>
           </TouchableOpacity>
 
+          {/* 2 min teacher card*/}
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              Linking.openURL(
+                "https://www.sciencenews.org/article/misinformation-fake-news-stories-social-media-brain"
+              );
+            }}
+          >
+            <LinearGradient
+              colors={["#3400C8", "#C80085"]}
+              style={styles.trendingCard}
+            >
+              <Text style={styles.cardTitle}>Your 2 minute lesson</Text>
+              <Text style={styles.trendingTitle}>
+                From Information to Affirmation – The Danger of Misinformation
+              </Text>
+              <Image
+                source={require("./EducationImage/EduToon1.jpg")}
+                style={styles.Image}
+              />
+              <Text style={styles.trendingDescription}> </Text>
+              <Text style={styles.trendingDescription}>
+                Online misinformation is often emotional, sensational, and
+                viral. This makes information online not about learning — it’s
+                about feeling “right” or “angry.” Look at how wild ideas (fake
+                news, conspiracy theories, hate, lies) flow into the person’s
+                head from the screen.
+              </Text>
+              <Text style={styles.trendingTitle}>
+                Don't let your brain be filled with garbage just because it
+                feels good to believe it.
+              </Text>
+              <View style={styles.trendingIcon}>
+                <Ionicons
+                  name="barbell-outline"
+                  size={24}
+                  color="rgba(255,255,255,0.8)"
+                />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+
           {/* Trending Today Card */}
-          <TouchableOpacity style={styles.card} onPress={openKaspersky}>
-            <LinearGradient colors={["#EF4444", "#DC2626"]} style={styles.trendingCard}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              Linking.openURL(
+                "https://www.kaspersky.com/resource-center/definitions/what-is-zero-click-malware"
+              );
+            }}
+          >
+            <LinearGradient
+              colors={["#EF4444", "#DC2626"]}
+              style={styles.trendingCard}
+            >
               <Text style={styles.cardTitle}>Trending Today</Text>
               <Text style={styles.trendingTitle}>The "Zero-Click" Scam 😱</Text>
-              <Text style={styles.trendingDescription}>How do I stay safe? Click to find out more ...</Text>
+              <Text style={styles.trendingDescription}>
+                How do I stay safe? Click to find out more ...
+              </Text>
               <View style={styles.trendingIcon}>
-                <Ionicons name="trending-up" size={24} color="rgba(255,255,255,0.8)" />
+                <Ionicons
+                  name="trending-up"
+                  size={24}
+                  color="rgba(255,255,255,0.8)"
+                />
               </View>
             </LinearGradient>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -93,6 +186,12 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 100,
+  },
+  Image: {
+    height: 250,
+    width: 350,
+    alignSelf: "center",
+    paddingBottom: 20,
   },
   title: {
     fontSize: 28,
@@ -130,13 +229,13 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "600",
     color: "white",
     marginBottom: 8,
   },
   cardSubtitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "500",
     color: "white",
     marginBottom: 8,
@@ -214,4 +313,4 @@ const styles = StyleSheet.create({
     top: 20,
     right: 20,
   },
-})
+});

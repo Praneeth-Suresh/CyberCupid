@@ -1,35 +1,59 @@
 "use client"
 
 import { useState } from "react"
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, StatusBar, Image, Alert } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import * as ImagePicker from "expo-image-picker"
-import { Ionicons } from "@expo/vector-icons"
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  Image,
+  Alert,
+  Platform,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PhotoUpload({ navigation }) {
-  const [photos, setPhotos] = useState(Array(6).fill(null))
+  const [photos, setPhotos] = useState(Array(6).fill(null));
 
   const requestPermissions = async () => {
-    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync()
-    const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    const { status: cameraStatus } =
+      await ImagePicker.requestCameraPermissionsAsync();
+    const { status: mediaStatus } =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    console.log("Camera permission:", cameraStatus);
+    console.log("Media permission:", mediaStatus);
 
     if (cameraStatus !== "granted" || mediaStatus !== "granted") {
-      Alert.alert("Permission needed", "Camera and photo library access is required to upload photos.")
-      return false
+      Alert.alert(
+        "Permission needed",
+        "Camera and photo library access is required to upload photos."
+      );
+      return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const showImagePicker = async (index) => {
-    const hasPermission = await requestPermissions()
-    if (!hasPermission) return
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) return;
 
-    Alert.alert("Select Photo", "Choose how you want to add your photo", [
-      { text: "Camera", onPress: () => openCamera(index) },
-      { text: "Gallery", onPress: () => openGallery(index) },
-      { text: "Cancel", style: "cancel" },
-    ])
-  }
+    if (Platform.OS === "web") {
+      console.log(
+        "Alerts are not supported on web, going straight to photo selection. (can be changed to photo taking in script PhotoUpload.js)"
+      );
+      openGallery(index);
+    } else {
+      Alert.alert("Select Photo", "Choose how you want to add your photo", [
+        { text: "Camera", onPress: () => openCamera(index) },
+        { text: "Gallery", onPress: () => openGallery(index) },
+        { text: "Cancel", style: "cancel" },
+      ]);
+    }
+  };
 
   const openCamera = async (index) => {
     const result = await ImagePicker.launchCameraAsync({
@@ -37,14 +61,14 @@ export default function PhotoUpload({ navigation }) {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
-    })
+    });
 
     if (!result.canceled) {
-      const newPhotos = [...photos]
-      newPhotos[index] = result.assets[0].uri
-      setPhotos(newPhotos)
+      const newPhotos = [...photos];
+      newPhotos[index] = result.assets[0].uri;
+      setPhotos(newPhotos);
     }
-  }
+  };
 
   const openGallery = async (index) => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -52,18 +76,18 @@ export default function PhotoUpload({ navigation }) {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
-    })
+    });
 
     if (!result.canceled) {
-      const newPhotos = [...photos]
-      newPhotos[index] = result.assets[0].uri
-      setPhotos(newPhotos)
+      const newPhotos = [...photos];
+      newPhotos[index] = result.assets[0].uri;
+      setPhotos(newPhotos);
     }
-  }
+  };
 
   const handleAdd = () => {
-    navigation.navigate("PhotoVerification")
-  }
+    navigation.navigate("PhotoVerification");
+  };
 
   const GuidelineItem = ({ icon, text, color }) => (
     <View style={styles.guidelineItem}>
@@ -72,7 +96,7 @@ export default function PhotoUpload({ navigation }) {
       </View>
       <Text style={styles.guidelineText}>{text}</Text>
     </View>
-  )
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,7 +107,11 @@ export default function PhotoUpload({ navigation }) {
 
         <View style={styles.photoGrid}>
           {photos.map((photo, index) => (
-            <TouchableOpacity key={index} style={styles.photoSlot} onPress={() => showImagePicker(index)}>
+            <TouchableOpacity
+              key={index}
+              style={styles.photoSlot}
+              onPress={() => showImagePicker(index)}
+            >
               {photo ? (
                 <Image source={{ uri: photo }} style={styles.photo} />
               ) : (
@@ -97,8 +125,12 @@ export default function PhotoUpload({ navigation }) {
           <Text style={styles.guidelinesTitle}>Photo Guidelines</Text>
           <View style={styles.guidelines}>
             <GuidelineItem icon="person" text="Clear face" color="#10B981" />
-            <GuidelineItem icon="glasses" text="No sunglasses" color="#EF4444" />
-            <GuidelineItem icon="people" text="No group" color="#EF4444" />
+            <GuidelineItem
+              icon="glasses"
+              text="No sunglasses"
+              color="#EF4444"
+            />
+            <GuidelineItem icon="people" text="Front Shot" color="#10B981" />
           </View>
         </View>
       </View>
@@ -116,7 +148,7 @@ export default function PhotoUpload({ navigation }) {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
