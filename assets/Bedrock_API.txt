@@ -1,0 +1,5 @@
+$uri = "https://z9qta7yhq8.execute-api.us-east-1.amazonaws.com/Question"
+$jsonBody = '{"prompt": "How can I stay safe online?", "context": "How are you?"}'
+$response = Invoke-RestMethod -Uri $uri -Method Post -Body $jsonBody -ContentType "application/json"
+
+Write-Output $response
