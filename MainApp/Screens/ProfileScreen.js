@@ -69,7 +69,7 @@ export default function ProfileScreen() {
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
-      { text: "Logout", onPress: () => console.log("User logged out") },
+      { text: "Logout", onPress: () => navigation.navigate("Login") },
     ]);
   };
 
@@ -455,7 +455,7 @@ export default function ProfileScreen() {
 
               <TouchableOpacity
                 style={styles.logoutButton}
-                onPress={handleLogout}
+                onPress={() => navigation.navigate("Login")}
               >
                 <Text style={styles.logoutButtonText}>Logout</Text>
               </TouchableOpacity>
