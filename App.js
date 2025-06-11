@@ -6,7 +6,6 @@ import SplashScreen from "./Ingress/splash";
 import Login from "./Ingress/login";
 import SignUpPage from "./Ingress/SignUp";
 import LoginPhone from "./Ingress/loginPhone";
-import LoginGoogle from "./Ingress/loginGoogle";
 import SetUp from "./SetUp/SetUpHome";
 
 const Stack = createStackNavigator();
