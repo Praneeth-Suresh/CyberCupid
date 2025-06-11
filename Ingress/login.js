@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   signUp: {
-    color: "#000",
+    color: "#F2F3F4",
   },
   signUpLink: {
     color: "#F2F3F4",  // Changed to very light gray
