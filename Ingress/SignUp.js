@@ -35,10 +35,11 @@ export default function Login({ navigation }) {
   // const { token, user, saveToken, saveUser } = useAuth();
 
   return (
-    <View style={styles.container}>
+    <View style={styles.bigcontainer}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size="100" color="#000000" ></Ionicons>
+          <Ionicons name="arrow-back" size="160%" color="#000000" ></Ionicons>
       </TouchableOpacity>
+      <View style={styles.container}>
       <Image source={logo} style={styles.logo} />
       <Text style={styles.title}>Sign Up</Text>
       <Formik
@@ -102,6 +103,7 @@ export default function Login({ navigation }) {
           </>
         )}
       </Formik>
+      </View>
     </View>
   );
 }
@@ -109,35 +111,47 @@ export default function Login({ navigation }) {
 
 
 const styles = StyleSheet.create({
+
+  bigcontainer: {
+    backgroundColor: "#E0D7F7",
+    paddingTop: "5%",
+  },
   container: {
+    display: "flex",
+    justifyContent: "space-between",
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#E0D7F7",
     paddingHorizontal: 20,
   },
   logo: {
+    marginTop: "25%",
     height: 200,
     width: 200,
     resizeMode: "contain",
     marginBottom: 20,
   },
   title: {
-    fontSize: 32,
-    marginBottom: 40,
+    fontSize: 50,
+    marginTop: "15%",
+    marginBottom: "20%",
     fontWeight: "bold",
-    color: "black",
+    color: "purple",
   },
+    // ...existing code...
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    height: 50,
-    backgroundColor: "#f1f1f1",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-  },
+      flexDirection: "row",
+      alignItems: "center",
+      width: "80%",
+      height: 50,
+      borderBottomWidth: 1,
+      borderBottomColor: "#aaa",
+      paddingHorizontal: 10,
+      marginLeft: "10%",
+      marginRight: "10%",
+
+    },
+
   icon: {
     marginRight: 10,
   },
@@ -151,13 +165,16 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   button: {
-    width: "100%",
+    width: "80%",
     height: 50,
     backgroundColor: "#1E90FF",
-    borderRadius: 8,
+    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
     marginBottom: 20,
+    marginLeft: "10%",
+    marginRight: "10%",
   },
   buttonText: {
     color: "#fff",
@@ -165,6 +182,7 @@ const styles = StyleSheet.create({
   },
   signUp: {
     color: "#000",
+    marginBottom: "150%",
   },
   signUpLink: {
     color: "#1E90FF", // Changed from "#F2F3F4" to match the button color
@@ -175,6 +193,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   backButton: {
-    marginRight: 12,
+    size: 50,
+    marginLeft: "8%",
+    marginTop: "8%",
   },
 });

@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     paddingHorizontal: 20,
+    paddingTop: "5%",
   },
   logo: {
     height: 200,

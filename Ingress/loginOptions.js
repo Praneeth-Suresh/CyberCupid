@@ -29,12 +29,12 @@ const LoginScreen = ({ navigation }) => {
 
         {/* Email Login */}
         <Pressable
-          onPress={() => navigation.navigate("LoginEmail")}
+          onPress={() => navigation.navigate("SignUp")}
           style={login_styles.loginButton}
         >
           <View style={login_styles.buttonContent}>
-            <View style={login_styles.buttonIcon}><Ionicons name="mail-outline" size={27} color="#f2f3f4"></Ionicons></View>
-            <Text style={login_styles.buttonText}>LOGIN WITH EMAIL</Text>
+            {/* <View style={login_styles.buttonIcon}><Ionicons name="call-outline" size={27} color="#f2f3f4"></Ionicons></View> */}
+            <Text style={login_styles.buttonText}>CREATE ACCOUNT</Text>
           </View>
         </Pressable>
 
@@ -44,8 +44,8 @@ const LoginScreen = ({ navigation }) => {
           style={login_styles.loginButton}
         >
           <View style={login_styles.buttonContent}>
-            <Text style={login_styles.buttonIcon}><Ionicons name="call-outline" size={27} color="#f2f3f4"></Ionicons></Text>
-            <Text style={login_styles.buttonText}>LOGIN WITH PHONE</Text>
+            {/* <Text style={login_styles.buttonIcon}><Ionicons name="call-outline" size={27} color="#f2f3f4"></Ionicons></Text> */}
+            <Text style={login_styles.buttonText}>SIGN IN</Text>
           </View>
         </Pressable>
       </View>
@@ -70,6 +70,7 @@ const login_styles = StyleSheet.create({
     padding: 20,
     height: 5,
     justifyContent: "space-between",
+    paddingTop: "5%",
   },
   headerText: {
     textAlign: "center",
@@ -119,7 +120,7 @@ const login_styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "light",
     textTransform: "uppercase",
     color: "#FFF", // White for contrast
     letterSpacing: 1,

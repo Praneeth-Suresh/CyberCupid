@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     paddingHorizontal: 20,
+    paddingTop: "5%",
   },
   logo: {
     height: 200,
@@ -132,7 +133,6 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: "#f1f1f1",
     borderRadius: 8,
-    paddingHorizontal: 10,
     marginBottom: 20,
   },
   icon: {
@@ -148,13 +148,14 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   button: {
-    width: "100%",
+    width: 150,
     height: 50,
     backgroundColor: "#1E90FF",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
+    alignSelf: "center", // Centers the button horizontally
   },
   buttonText: {
     color: "#fff",
