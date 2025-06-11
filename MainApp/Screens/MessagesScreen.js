@@ -130,21 +130,31 @@ const CHATBOT_DATA = [
     messages: [
       {
         sender: 0,
-        content: "Hey handsome 😘 I’ve never connected with someone this quickly. I think I’m falling for you already.",
+        content:
+          "Hey handsome 😘 I’ve never connected with someone this quickly. I think I’m falling for you already.",
         timestamp: new Date(),
         read: true,
         reactions: [],
       },
       {
         sender: 1,
-        content: "Wow, that’s fast lol. We’ve only been talking for a few days.",
+        content:
+          "Wow, that’s fast lol. We’ve only been talking for a few days.",
         timestamp: new Date(),
         read: true,
         reactions: [],
       },
       {
         sender: 0,
-        content: "Sometimes the heart just knows 💖 I wish I could meet you, but I’m stuck overseas on business. Soon though, I promise.",
+        content:
+          "Sometimes the heart just knows 💖 I wish I could meet you, but I’m stuck overseas on business. Soon though, I promise.",
+        timestamp: new Date(),
+        read: true,
+        reactions: [],
+      },
+      {
+        sender: 1,
+        content: "That sounds intense. Hope it’s going well.",
         timestamp: new Date(),
         read: true,
         reactions: [],
@@ -157,11 +167,13 @@ const EMOJI_REACTIONS = ["❤️", "😂", "😮", "😢", "😡", "👍", "👎
 
 export default function MessagesScreen() {
   const [chatData, setChatData] = useState(INITIAL_CHAT_DATA);
+  const [chatbot, setChatbot] = useState(CHATBOT_DATA[0]); // Manage chatbot as state
   const [selectedChat, setSelectedChat] = useState(null);
   const [messageText, setMessageText] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showReactionPicker, setShowReactionPicker] = useState(null);
+  const [isThinking, setIsThinking] = useState(false); // NEW STATE
   const flatListRef = useRef(null);
 
   const theme = isDarkMode ? darkTheme : lightTheme;
@@ -182,28 +194,122 @@ export default function MessagesScreen() {
       reactions: [],
     };
 
-    setChatData((prevData) =>
-      prevData.map((chat) =>
-        chat.chat_id === selectedChat.chat_id
-          ? { ...chat, messages: [...chat.messages, newMessage] }
-          : chat
-      )
-    );
+    if (selectedChat.isChatbot) {
+      setChatbot((prevChatbotState) => {
+        const updatedChatbot = {
+          ...prevChatbotState,
+          messages: [...prevChatbotState.messages, newMessage],
+        };
+        setSelectedChat(updatedChatbot);
+        return updatedChatbot;
+      });
+    } else {
+      setChatData((prevData) => {
+        const newData = prevData.map((chatInArray) => {
+          if (chatInArray.chat_id === selectedChat.chat_id) {
+            const updatedChatInArray = {
+              ...chatInArray,
+              messages: [...chatInArray.messages, newMessage],
+            };
+            setSelectedChat(updatedChatInArray);
+            return updatedChatInArray;
+          }
+          return chatInArray;
+        });
+        return newData;
+      });
+    }
 
     setMessageText("");
 
-    // Scroll to bottom
+    // Show "thinking" message
+    setIsThinking(true);
+
+    handleAWS(selectedChat, newMessage);
+
     setTimeout(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
     }, 100);
 
-    // Update CSV in real implementation
     updateCSV(selectedChat.chat_id, newMessage);
   };
 
   const updateCSV = (chatId, message) => {
     // In a real implementation, this would update the CSV file
-    console.log("Updating CSV for chat:", chatId, "with message:", message);
+    console.log(
+      "Updating CSV for chat:",
+      chatId,
+      "with message:",
+      message.content
+    );
+  };
+
+  const handleAWS = async (chatObj, message) => {
+    try {
+      const response = await fetch(
+        "https://z9qta7yhq8.execute-api.us-east-1.amazonaws.com/Question",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: message.content,
+            context: "How are you?",
+          }),
+        }
+      );
+      const data = await response.json();
+      console.log("AWS Response:", data);
+
+      // Remove "thinking" message
+      setIsThinking(false);
+
+      const awsMessage = {
+        sender: 0,
+        content:
+          typeof data === "string"
+            ? data
+            : data?.response || JSON.stringify(data),
+        timestamp: new Date(),
+        read: false,
+        reactions: [],
+      };
+
+      if (chatObj.isChatbot) {
+        setChatbot((prevChatbotState) => {
+          const updatedChatbot = {
+            ...prevChatbotState,
+            messages: [...prevChatbotState.messages, awsMessage],
+          };
+          setSelectedChat((prev) =>
+            prev && prev.chat_id === chatObj.chat_id ? updatedChatbot : prev
+          );
+          return updatedChatbot;
+        });
+      } else {
+        setChatData((prevData) =>
+          prevData.map((chatInArray) => {
+            if (chatInArray.chat_id === chatObj.chat_id) {
+              const updatedChatInArray = {
+                ...chatInArray,
+                messages: [...chatInArray.messages, awsMessage],
+              };
+              setSelectedChat((prev) =>
+                prev && prev.chat_id === chatObj.chat_id
+                  ? updatedChatInArray
+                  : prev
+              );
+              return updatedChatInArray;
+            }
+            return chatInArray;
+          })
+        );
+      }
+    } catch (error) {
+      setIsThinking(false);
+      console.error("AWS Request Error:", error);
+    }
   };
 
   const pickImage = async () => {
@@ -283,8 +389,8 @@ export default function MessagesScreen() {
       displayContent = isImage
         ? "📷 Image"
         : isVideo
-        ? "🎥 Video"
-        : "📄 Document";
+          ? "🎥 Video"
+          : "📄 Document";
     }
 
     return (
@@ -398,10 +504,10 @@ export default function MessagesScreen() {
               {lastMessage.content.startsWith("image:")
                 ? "📷 Image"
                 : lastMessage.content.startsWith("video:")
-                ? "🎥 Video"
-                : lastMessage.content.startsWith("pdf:")
-                ? "📄 Document"
-                : lastMessage.content}
+                  ? "🎥 Video"
+                  : lastMessage.content.startsWith("pdf:")
+                    ? "📄 Document"
+                    : lastMessage.content}
             </Text>
             {unreadCount > 0 && (
               <View style={styles.unreadBadge}>
@@ -415,10 +521,12 @@ export default function MessagesScreen() {
   };
 
   // Renders the chatbot entry at the top of the chat list
-  const renderChatbotItem = () => (
+  const renderChatbotItem = (
+    { item } // item is the chatbot state object
+  ) => (
     <TouchableOpacity
       style={styles.chatbotItem}
-      onPress={() => setSelectedChat(CHATBOT_DATA[0])}
+      onPress={() => setSelectedChat(item)} // Use item from state
       activeOpacity={0.85}
     >
       <LinearGradient
@@ -427,9 +535,14 @@ export default function MessagesScreen() {
         end={{ x: 1, y: 1 }}
         style={styles.chatbotGradient}
       >
-        <Ionicons name="sparkles" size={28} color="#fff" style={{ marginRight: 12 }} />
+        <Ionicons
+          name="sparkles"
+          size={28}
+          color="#fff"
+          style={{ marginRight: 12 }}
+        />
         <View>
-          <Text style={styles.chatbotName}>CyberCupid Weekly Challenge</Text>
+          <Text style={styles.chatbotName}>{item.name_of_user}</Text>
           <Text style={styles.chatbotSubtitle}>Click to chat!</Text>
         </View>
       </LinearGradient>
@@ -437,6 +550,21 @@ export default function MessagesScreen() {
   );
 
   if (selectedChat) {
+    // Combine messages and "thinking" message if needed
+    const messagesToShow = isThinking
+      ? [
+          ...selectedChat.messages,
+          {
+            sender: 0,
+            content: "We're Thinking, give us a sec ...",
+            timestamp: new Date(),
+            read: false,
+            reactions: [],
+            isThinking: true,
+          },
+        ]
+      : selectedChat.messages;
+
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.background }]}
@@ -476,7 +604,7 @@ export default function MessagesScreen() {
         {/* Messages */}
         <FlatList
           ref={flatListRef}
-          data={selectedChat.messages}
+          data={messagesToShow}
           renderItem={renderMessage}
           keyExtractor={(item, index) => index.toString()}
           style={styles.messagesList}
@@ -625,7 +753,7 @@ export default function MessagesScreen() {
 
       {/* Chatbot FlatList */}
       <FlatList
-        data={CHATBOT_DATA}
+        data={chatbot ? [chatbot] : []} // Use chatbot state, ensure it's an array
         renderItem={renderChatbotItem}
         keyExtractor={(item) => item.chat_id}
         style={{ marginBottom: 8, flexGrow: 0 }}

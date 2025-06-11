@@ -3,36 +3,50 @@ import { StyleSheet, Text, View, TouchableOpacity, Modal } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 
 export default function QuestionModal({ question, onAnswer }) {
-  const [selectedAnswer, setSelectedAnswer] = useState(null)
-  const [showResult, setShowResult] = useState(false)
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [showResult, setShowResult] = useState(false);
 
   const handleAnswerSelect = (index) => {
-    setSelectedAnswer(index)
-    setShowResult(true)
-    
-    setTimeout(() => {
-      const isCorrect = index === question.correctAnswer
-      onAnswer(isCorrect)
-    }, 1500)
-  }
+    setSelectedAnswer(index);
+    setShowResult(true);
 
-  const isCorrect = selectedAnswer === question.correctAnswer
+    setTimeout(() => {
+      const isCorrect = index === question.correctAnswer;
+      onAnswer(isCorrect);
+    }, 1500);
+  };
+
+  const isCorrect = selectedAnswer === question.correctAnswer;
 
   return (
     <Modal transparent visible animationType="fade">
       <View style={styles.overlay}>
+        {/* Context Bubble */}
+        {question.context && (
+          <View style={styles.contextBubbleContainer}>
+            <View style={styles.contextBubble}>
+              <Text style={styles.contextText}>{question.context}</Text>
+            </View>
+          </View>
+        )}
         <View style={styles.modal}>
-          <LinearGradient colors={["#1e1b4b", "#3730a3"]} style={styles.modalGradient}>
+          <LinearGradient
+            colors={["#1e1b4b", "#3730a3"]}
+            style={styles.modalGradient}
+          >
             <Text style={styles.questionText}>{question.text}</Text>
-            
+
             <View style={styles.optionsContainer}>
               {question.options.map((option, index) => (
                 <TouchableOpacity
                   key={index}
                   style={[
                     styles.optionButton,
-                    selectedAnswer === index && (isCorrect ? styles.correctOption : styles.wrongOption),
-                    selectedAnswer !== null && index === question.correctAnswer && styles.correctOption,
+                    selectedAnswer === index &&
+                      (isCorrect ? styles.correctOption : styles.wrongOption),
+                    selectedAnswer !== null &&
+                      index === question.correctAnswer &&
+                      styles.correctOption,
                   ]}
                   onPress={() => handleAnswerSelect(index)}
                   disabled={selectedAnswer !== null}
@@ -44,7 +58,12 @@ export default function QuestionModal({ question, onAnswer }) {
 
             {showResult && (
               <View style={styles.resultContainer}>
-                <Text style={[styles.resultText, isCorrect ? styles.correctText : styles.wrongText]}>
+                <Text
+                  style={[
+                    styles.resultText,
+                    isCorrect ? styles.correctText : styles.wrongText,
+                  ]}
+                >
                   {isCorrect ? "Good Job! +500" : "Uh oh.. -300"}
                 </Text>
                 {!isCorrect && (
@@ -58,7 +77,7 @@ export default function QuestionModal({ question, onAnswer }) {
         </View>
       </View>
     </Modal>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -128,4 +147,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
   },
-})
+  contextBubbleContainer: {
+    width: "100%",
+    alignItems: "flex-start",
+    marginBottom: 18,
+  },
+  contextBubble: {
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    maxWidth: "90%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
+    marginLeft: 8,
+    marginTop: 8,
+    position: "relative",
+  },
+  contextText: {
+    color: "#222",
+    fontSize: 15,
+    lineHeight: 21,
+  },
+});

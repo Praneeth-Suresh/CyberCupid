@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -10,60 +10,68 @@ import {
   SafeAreaView,
   Animated,
   Alert,
-} from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Ionicons } from "@expo/vector-icons"
-import GamePlayer from "./GamePlayer"
-import GameObstacle from "./GameObstacle"
-import QuestionModal from "./QuestionModal"
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import GamePlayer from "./GamePlayer";
+import GameObstacle from "./GameObstacle";
+import QuestionModal from "./QuestionModal";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-const GAME_HEIGHT = screenHeight - 100
-const PLAYER_SIZE = 30
-const OBSTACLE_WIDTH = 40
-const OBSTACLE_HEIGHT = 40
-const JUMP_HEIGHT = 80
-const GAME_SPEED = 3
+const GAME_HEIGHT = screenHeight - 100;
+const PLAYER_SIZE = 30;
+const OBSTACLE_WIDTH = 40;
+const OBSTACLE_HEIGHT = 40;
+const JUMP_HEIGHT = 80;
+const GAME_SPEED = 3;
+const HORIZONTAL_MOVE_DISTANCE = 50; // Distance to move left/right
 
 export default function SecurityDashGame({ onClose }) {
-  const [gameStarted, setGameStarted] = useState(false)
-  const [gameOver, setGameOver] = useState(false)
-  const [score, setScore] = useState(0)
-  const [playerY, setPlayerY] = useState(GAME_HEIGHT - 150)
-  const [isJumping, setIsJumping] = useState(false)
-  const [obstacles, setObstacles] = useState([])
-  const [showQuestion, setShowQuestion] = useState(false)
-  const [questionAnswered, setQuestionAnswered] = useState(false)
-  const [gameWon, setGameWon] = useState(false)
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [playerX, setPlayerX] = useState(screenWidth / 2 - PLAYER_SIZE / 2);
+  const [playerY, setPlayerY] = useState(GAME_HEIGHT - 150);
+  const [isJumping, setIsJumping] = useState(false);
+  const [isMovingHorizontally, setIsMovingHorizontally] = useState(false);
+  const [obstacles, setObstacles] = useState([]);
+  const [showQuestion, setShowQuestion] = useState(false);
+  const [questionAnswered, setQuestionAnswered] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
 
-  const gameLoopRef = useRef()
-  const playerYRef = useRef(new Animated.Value(GAME_HEIGHT - 150))
-  const backgroundYRef = useRef(new Animated.Value(0))
-  const obstacleIdCounter = useRef(0)
-  const gameTimeRef = useRef(0)
-  const questionShownRef = useRef(false)
+  const gameLoopRef = useRef();
+  const playerYRef = useRef(new Animated.Value(GAME_HEIGHT - 150));
+  const playerXRef = useRef(
+    new Animated.Value(screenWidth / 2 - PLAYER_SIZE / 2)
+  );
+  const backgroundYRef = useRef(new Animated.Value(0));
+  const obstacleIdCounter = useRef(0);
+  const gameTimeRef = useRef(0);
+  const questionShownRef = useRef(false);
 
   const question = {
+    context:
+      "🎉 CONGRATS, YOU WON! Click [bit.ly/xyz123] to claim your FREE $500 Amazon gift card! Hurry—offer expires in 10 MINUTES! 🎁 (Shared by @Official_JeffBezos_HelpTeam)",
     text: "What are the RED FLAGS here?",
     options: [
       "Too many emojis",
-      "Shortened link, mismatched username, fake urgency", 
-      "The video isn't HD"
+      "Shortened link, mismatched username, fake urgency",
+      "The video isn't HD",
     ],
-    correctAnswer: 1
-  }
+    correctAnswer: 1,
+  };
 
   useEffect(() => {
     if (gameStarted && !gameOver && !showQuestion) {
-      startGameLoop()
+      startGameLoop();
     }
     return () => {
       if (gameLoopRef.current) {
-        clearInterval(gameLoopRef.current)
+        clearInterval(gameLoopRef.current);
       }
-    }
-  }, [gameStarted, gameOver, showQuestion])
+    };
+  }, [gameStarted, gameOver, showQuestion]);
 
   useEffect(() => {
     // Animate background movement
@@ -74,60 +82,69 @@ export default function SecurityDashGame({ onClose }) {
           duration: 3000,
           useNativeDriver: true,
         })
-      ).start()
+      ).start();
     }
-  }, [gameStarted, gameOver, showQuestion])
+  }, [gameStarted, gameOver, showQuestion]);
 
   const startGame = () => {
-    setGameStarted(true)
-    setGameOver(false)
-    setScore(0)
-    setPlayerY(GAME_HEIGHT - 150)
-    setObstacles([])
-    setShowQuestion(false)
-    setQuestionAnswered(false)
-    setGameWon(false)
-    gameTimeRef.current = 0
-    questionShownRef.current = false
-    generateInitialObstacles()
-  }
+    setGameStarted(true);
+    setGameOver(false);
+    setScore(0);
+    setPlayerX(screenWidth / 2 - PLAYER_SIZE / 2);
+    setPlayerY(GAME_HEIGHT - 150);
+    setObstacles([]);
+    setShowQuestion(false);
+    setQuestionAnswered(false);
+    setGameWon(false);
+    gameTimeRef.current = 0;
+    questionShownRef.current = false;
+    playerXRef.current.setValue(screenWidth / 2 - PLAYER_SIZE / 2);
+    playerYRef.current.setValue(GAME_HEIGHT - 150);
+    generateInitialObstacles();
+  };
 
   const generateInitialObstacles = () => {
-    const newObstacles = []
+    const newObstacles = [];
     for (let i = 0; i < 5; i++) {
       newObstacles.push({
         id: obstacleIdCounter.current++,
         x: Math.random() * (screenWidth - OBSTACLE_WIDTH),
         y: -i * 200 - 200,
-        type: Math.random() > 0.5 ? 'square' : 'circle'
-      })
+        type: Math.random() > 0.5 ? "square" : "circle",
+      });
     }
-    setObstacles(newObstacles)
-  }
+    setObstacles(newObstacles);
+  };
 
   const startGameLoop = () => {
     gameLoopRef.current = setInterval(() => {
-      gameTimeRef.current += 50
+      gameTimeRef.current += 50;
 
       // Show question after 3 seconds
-      if (gameTimeRef.current > 3000 && !questionShownRef.current && !questionAnswered) {
-        questionShownRef.current = true
-        setShowQuestion(true)
-        return
+      if (
+        gameTimeRef.current > 3000 &&
+        !questionShownRef.current &&
+        !questionAnswered
+      ) {
+        questionShownRef.current = true;
+        setShowQuestion(true);
+        return;
       }
 
       // End game 10 seconds after question is answered
       if (questionAnswered && gameTimeRef.current > 13000) {
-        setGameWon(true)
-        setGameOver(true)
-        return
+        setGameWon(true);
+        setGameOver(true);
+        return;
       }
 
-      setObstacles(prevObstacles => {
-        const updatedObstacles = prevObstacles.map(obstacle => ({
-          ...obstacle,
-          y: obstacle.y + GAME_SPEED
-        })).filter(obstacle => obstacle.y < GAME_HEIGHT + 100)
+      setObstacles((prevObstacles) => {
+        const updatedObstacles = prevObstacles
+          .map((obstacle) => ({
+            ...obstacle,
+            y: obstacle.y + GAME_SPEED,
+          }))
+          .filter((obstacle) => obstacle.y < GAME_HEIGHT + 100);
 
         // Add new obstacles
         if (Math.random() < 0.02) {
@@ -135,38 +152,38 @@ export default function SecurityDashGame({ onClose }) {
             id: obstacleIdCounter.current++,
             x: Math.random() * (screenWidth - OBSTACLE_WIDTH),
             y: -OBSTACLE_HEIGHT,
-            type: Math.random() > 0.5 ? 'square' : 'circle'
-          })
+            type: Math.random() > 0.5 ? "square" : "circle",
+          });
         }
 
         // Check collisions
         const playerRect = {
-          x: screenWidth / 2 - PLAYER_SIZE / 2,
+          x: playerX,
           y: playerY,
           width: PLAYER_SIZE,
-          height: PLAYER_SIZE
-        }
+          height: PLAYER_SIZE,
+        };
 
         for (let obstacle of updatedObstacles) {
           const obstacleRect = {
             x: obstacle.x,
             y: obstacle.y,
             width: OBSTACLE_WIDTH,
-            height: OBSTACLE_HEIGHT
-          }
+            height: OBSTACLE_HEIGHT,
+          };
 
           if (checkCollision(playerRect, obstacleRect)) {
-            setGameOver(true)
-            return updatedObstacles
+            setGameOver(true);
+            return updatedObstacles;
           }
         }
 
-        return updatedObstacles
-      })
+        return updatedObstacles;
+      });
 
-      setScore(prev => prev + 1)
-    }, 50)
-  }
+      setScore((prev) => prev + 1);
+    }, 50);
+  };
 
   const checkCollision = (rect1, rect2) => {
     return (
@@ -174,15 +191,15 @@ export default function SecurityDashGame({ onClose }) {
       rect1.x + rect1.width > rect2.x &&
       rect1.y < rect2.y + rect2.height &&
       rect1.y + rect1.height > rect2.y
-    )
-  }
+    );
+  };
 
   const jump = () => {
-    if (isJumping || showQuestion) return
+    if (isJumping || showQuestion || isMovingHorizontally) return;
 
-    setIsJumping(true)
-    const newY = Math.max(50, playerY - JUMP_HEIGHT)
-    
+    setIsJumping(true);
+    const newY = Math.max(50, playerY - JUMP_HEIGHT);
+
     Animated.sequence([
       Animated.timing(playerYRef.current, {
         toValue: newY,
@@ -193,45 +210,86 @@ export default function SecurityDashGame({ onClose }) {
         toValue: playerY,
         duration: 300,
         useNativeDriver: false,
-      })
+      }),
     ]).start(() => {
-      setIsJumping(false)
-    })
+      setIsJumping(false);
+    });
 
     playerYRef.current.addListener(({ value }) => {
-      setPlayerY(value)
-    })
-  }
+      setPlayerY(value);
+    });
+  };
+
+  const moveHorizontally = (direction) => {
+    if (isMovingHorizontally || showQuestion || isJumping) return;
+
+    setIsMovingHorizontally(true);
+    const currentX = playerXRef.current._value; // Get current animated value
+    const targetX =
+      direction === "left"
+        ? Math.max(0, currentX - HORIZONTAL_MOVE_DISTANCE)
+        : Math.min(
+            screenWidth - PLAYER_SIZE,
+            currentX + HORIZONTAL_MOVE_DISTANCE
+          );
+
+    Animated.sequence([
+      Animated.timing(playerXRef.current, {
+        toValue: targetX,
+        duration: 200, // Duration of dash
+        useNativeDriver: false,
+      }),
+      Animated.timing(playerXRef.current, {
+        toValue: screenWidth / 2 - PLAYER_SIZE / 2, // Return to center
+        duration: 300, // Duration of return
+        useNativeDriver: false,
+      }),
+    ]).start(() => {
+      setIsMovingHorizontally(false);
+      // Ensure playerX state is synced with the final animated value if needed,
+      // though direct manipulation of playerXRef is primary for animation.
+      // setPlayerX(screenWidth / 2 - PLAYER_SIZE / 2);
+    });
+
+    // Listener to update state for collision detection
+    const listenerId = playerXRef.current.addListener(({ value }) => {
+      setPlayerX(value);
+    });
+
+    // Clean up listener after animation (optional, but good practice if many listeners)
+    // setTimeout(() => playerXRef.current.removeListener(listenerId), 500);
+  };
 
   const handleQuestionAnswer = (isCorrect) => {
-    setShowQuestion(false)
-    setQuestionAnswered(true)
+    setShowQuestion(false);
+    setQuestionAnswered(true);
     if (isCorrect) {
-      setScore(prev => prev + 500)
+      setScore((prev) => prev + 500);
     } else {
-      setScore(prev => Math.max(0, prev - 300))
+      setScore((prev) => Math.max(0, prev - 300));
     }
-  }
+  };
 
   const resetGame = () => {
-    setGameStarted(false)
-    setGameOver(false)
-    setScore(0)
-    setObstacles([])
-    setShowQuestion(false)
-    setQuestionAnswered(false)
-    setGameWon(false)
-    gameTimeRef.current = 0
-    questionShownRef.current = false
+    setGameStarted(false);
+    setGameOver(false);
+    setScore(0);
+    setObstacles([]);
+    setPlayerX(screenWidth / 2 - PLAYER_SIZE / 2);
+    playerXRef.current.setValue(screenWidth / 2 - PLAYER_SIZE / 2);
+    setShowQuestion(false);
+    setQuestionAnswered(false);
+    setGameWon(false);
+    gameTimeRef.current = 0;
+    questionShownRef.current = false;
     if (gameLoopRef.current) {
-      clearInterval(gameLoopRef.current)
+      clearInterval(gameLoopRef.current);
     }
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={["#1e1b4b", "#3730a3"]} style={styles.gameArea}>
-        
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.backButton}>
@@ -243,7 +301,9 @@ export default function SecurityDashGame({ onClose }) {
         {!gameStarted ? (
           <View style={styles.startScreen}>
             <Text style={styles.gameTitle}>Security Dash</Text>
-            <Text style={styles.gameSubtitle}>Test your cybersecurity knowledge!</Text>
+            <Text style={styles.gameSubtitle}>
+              Test your cybersecurity knowledge!
+            </Text>
             <TouchableOpacity style={styles.startButton} onPress={startGame}>
               <Text style={styles.startButtonText}>START GAME</Text>
             </TouchableOpacity>
@@ -251,27 +311,30 @@ export default function SecurityDashGame({ onClose }) {
         ) : (
           <View style={styles.gamePlayArea}>
             {/* Background Pattern */}
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.backgroundPattern,
-                { transform: [{ translateY: backgroundYRef.current }] }
+                { transform: [{ translateY: backgroundYRef.current }] },
               ]}
             >
               {Array.from({ length: 20 }).map((_, i) => (
-                <View key={i} style={[styles.backgroundLine, { top: i * 100 }]} />
+                <View
+                  key={i}
+                  style={[styles.backgroundLine, { top: i * 100 }]}
+                />
               ))}
             </Animated.View>
 
             {/* Player */}
-            <GamePlayer 
-              x={screenWidth / 2 - PLAYER_SIZE / 2} 
-              y={playerY} 
+            <GamePlayer
+              x={playerX}
+              y={playerY}
               size={PLAYER_SIZE}
               isJumping={isJumping}
             />
 
             {/* Obstacles */}
-            {obstacles.map(obstacle => (
+            {obstacles.map((obstacle) => (
               <GameObstacle
                 key={obstacle.id}
                 x={obstacle.x}
@@ -282,23 +345,36 @@ export default function SecurityDashGame({ onClose }) {
               />
             ))}
 
-            {/* Jump Button */}
-            <TouchableOpacity 
-              style={styles.jumpButton} 
-              onPress={jump}
-              disabled={showQuestion}
-            >
-              <Ionicons name="arrow-up" size={30} color="white" />
-            </TouchableOpacity>
+            {/* Control Buttons */}
+            <View style={styles.controlsContainer}>
+              <TouchableOpacity
+                style={styles.controlButton}
+                onPress={() => moveHorizontally("left")}
+                disabled={showQuestion || isMovingHorizontally || isJumping}
+              >
+                <Ionicons name="arrow-back" size={30} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.controlButton}
+                onPress={jump}
+                disabled={showQuestion || isJumping || isMovingHorizontally}
+              >
+                <Ionicons name="arrow-up" size={30} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.controlButton}
+                onPress={() => moveHorizontally("right")}
+                disabled={showQuestion || isMovingHorizontally || isJumping}
+              >
+                <Ionicons name="arrow-forward" size={30} color="white" />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
 
         {/* Question Modal */}
         {showQuestion && (
-          <QuestionModal
-            question={question}
-            onAnswer={handleQuestionAnswer}
-          />
+          <QuestionModal question={question} onAnswer={handleQuestionAnswer} />
         )}
 
         {/* Game Over Screen */}
@@ -314,7 +390,10 @@ export default function SecurityDashGame({ onClose }) {
               </Text>
             )}
             <View style={styles.gameOverButtons}>
-              <TouchableOpacity style={styles.playAgainButton} onPress={resetGame}>
+              <TouchableOpacity
+                style={styles.playAgainButton}
+                onPress={resetGame}
+              >
                 <Text style={styles.playAgainText}>PLAY AGAIN</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exitButton} onPress={onClose}>
@@ -325,7 +404,7 @@ export default function SecurityDashGame({ onClose }) {
         )}
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -401,18 +480,22 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: "rgba(255,255,255,0.1)",
   },
-  jumpButton: {
+  controlsContainer: {
     position: "absolute",
     bottom: 30,
-    right: 30,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: 20,
+  },
+  controlButton: {
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 35,
     width: 70,
     height: 70,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: "rgba(255,255,255,0.3)",
   },
   gameOverScreen: {
     position: "absolute",
@@ -469,4 +552,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-})
+});
