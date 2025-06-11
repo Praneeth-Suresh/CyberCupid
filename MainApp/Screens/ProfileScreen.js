@@ -221,7 +221,10 @@ export default function ProfileScreen() {
           style={styles.header}
         >
           <View style={styles.headerTop}>
-            <TouchableOpacity style={styles.backButton}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.navigate("Home")}
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Profile</Text>

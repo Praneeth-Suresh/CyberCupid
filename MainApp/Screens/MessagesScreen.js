@@ -121,6 +121,38 @@ const INITIAL_CHAT_DATA = [
   },
 ];
 
+// Sample chatbot data
+const CHATBOT_DATA = [
+  {
+    name_of_user: "CyberCupid Weekly Challenge",
+    chat_id: "chatbot-001",
+    isChatbot: true,
+    messages: [
+      {
+        sender: 0,
+        content: "Hey handsome 😘 I’ve never connected with someone this quickly. I think I’m falling for you already.",
+        timestamp: new Date(),
+        read: true,
+        reactions: [],
+      },
+      {
+        sender: 1,
+        content: "Wow, that’s fast lol. We’ve only been talking for a few days.",
+        timestamp: new Date(),
+        read: true,
+        reactions: [],
+      },
+      {
+        sender: 0,
+        content: "Sometimes the heart just knows 💖 I wish I could meet you, but I’m stuck overseas on business. Soon though, I promise.",
+        timestamp: new Date(),
+        read: true,
+        reactions: [],
+      },
+    ],
+  },
+];
+
 const EMOJI_REACTIONS = ["❤️", "😂", "😮", "😢", "😡", "👍", "👎"];
 
 export default function MessagesScreen() {
@@ -382,6 +414,28 @@ export default function MessagesScreen() {
     );
   };
 
+  // Renders the chatbot entry at the top of the chat list
+  const renderChatbotItem = () => (
+    <TouchableOpacity
+      style={styles.chatbotItem}
+      onPress={() => setSelectedChat(CHATBOT_DATA[0])}
+      activeOpacity={0.85}
+    >
+      <LinearGradient
+        colors={["#a855f7", "#8b5cf6", "#f0abfc"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.chatbotGradient}
+      >
+        <Ionicons name="sparkles" size={28} color="#fff" style={{ marginRight: 12 }} />
+        <View>
+          <Text style={styles.chatbotName}>CyberCupid Weekly Challenge</Text>
+          <Text style={styles.chatbotSubtitle}>Click to chat!</Text>
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+
   if (selectedChat) {
     return (
       <SafeAreaView
@@ -568,6 +622,15 @@ export default function MessagesScreen() {
           />
         </TouchableOpacity>
       </View>
+
+      {/* Chatbot FlatList */}
+      <FlatList
+        data={CHATBOT_DATA}
+        renderItem={renderChatbotItem}
+        keyExtractor={(item) => item.chat_id}
+        style={{ marginBottom: 8, flexGrow: 0 }}
+        scrollEnabled={false}
+      />
 
       {/* Chat List */}
       <FlatList
@@ -880,5 +943,34 @@ const styles = StyleSheet.create({
   },
   reactionEmoji: {
     fontSize: 24,
+  },
+  chatbotItem: {
+    marginHorizontal: 20,
+    marginTop: 16,
+    marginBottom: 8,
+    borderRadius: 18,
+    overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#a855f7",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+  },
+  chatbotGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+  },
+  chatbotName: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    letterSpacing: 0.5,
+  },
+  chatbotSubtitle: {
+    color: "#f3e8ff",
+    fontSize: 13,
+    marginTop: 2,
   },
 });
