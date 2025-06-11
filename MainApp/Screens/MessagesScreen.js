@@ -130,21 +130,31 @@ const CHATBOT_DATA = [
     messages: [
       {
         sender: 0,
-        content: "Hey handsome 😘 I’ve never connected with someone this quickly. I think I’m falling for you already.",
+        content:
+          "Hey handsome 😘 I’ve never connected with someone this quickly. I think I’m falling for you already.",
         timestamp: new Date(),
         read: true,
         reactions: [],
       },
       {
         sender: 1,
-        content: "Wow, that’s fast lol. We’ve only been talking for a few days.",
+        content:
+          "Wow, that’s fast lol. We’ve only been talking for a few days.",
         timestamp: new Date(),
         read: true,
         reactions: [],
       },
       {
         sender: 0,
-        content: "Sometimes the heart just knows 💖 I wish I could meet you, but I’m stuck overseas on business. Soon though, I promise.",
+        content:
+          "Sometimes the heart just knows 💖 I wish I could meet you, but I’m stuck overseas on business. Soon though, I promise.",
+        timestamp: new Date(),
+        read: true,
+        reactions: [],
+      },
+      {
+        sender: 1,
+        content: "That sounds intense. Hope it’s going well.",
         timestamp: new Date(),
         read: true,
         reactions: [],
@@ -163,6 +173,7 @@ export default function MessagesScreen() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showReactionPicker, setShowReactionPicker] = useState(null);
+  const [isThinking, setIsThinking] = useState(false); // NEW STATE
   const flatListRef = useRef(null);
 
   const theme = isDarkMode ? darkTheme : lightTheme;
@@ -189,7 +200,6 @@ export default function MessagesScreen() {
           ...prevChatbotState,
           messages: [...prevChatbotState.messages, newMessage],
         };
-        // IMPORTANT: Update selectedChat to this new object instance
         setSelectedChat(updatedChatbot);
         return updatedChatbot;
       });
@@ -201,7 +211,6 @@ export default function MessagesScreen() {
               ...chatInArray,
               messages: [...chatInArray.messages, newMessage],
             };
-            // IMPORTANT: Update selectedChat to this new object instance
             setSelectedChat(updatedChatInArray);
             return updatedChatInArray;
           }
@@ -213,14 +222,15 @@ export default function MessagesScreen() {
 
     setMessageText("");
 
-    handleAWS(selectedChat, newMessage); // Pass selectedChat object
+    // Show "thinking" message
+    setIsThinking(true);
 
-    // Scroll to bottom
+    handleAWS(selectedChat, newMessage);
+
     setTimeout(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
     }, 100);
 
-    // Update CSV in real implementation
     updateCSV(selectedChat.chat_id, newMessage);
   };
 
@@ -252,7 +262,9 @@ export default function MessagesScreen() {
       const data = await response.json();
       console.log("AWS Response:", data);
 
-      // Add AWS response as a new message from the other user (sender: 0)
+      // Remove "thinking" message
+      setIsThinking(false);
+
       const awsMessage = {
         sender: 0,
         content:
@@ -270,7 +282,6 @@ export default function MessagesScreen() {
             ...prevChatbotState,
             messages: [...prevChatbotState.messages, awsMessage],
           };
-          // Update selectedChat if still viewing this chat
           setSelectedChat((prev) =>
             prev && prev.chat_id === chatObj.chat_id ? updatedChatbot : prev
           );
@@ -284,7 +295,6 @@ export default function MessagesScreen() {
                 ...chatInArray,
                 messages: [...chatInArray.messages, awsMessage],
               };
-              // Update selectedChat if still viewing this chat
               setSelectedChat((prev) =>
                 prev && prev.chat_id === chatObj.chat_id
                   ? updatedChatInArray
@@ -297,6 +307,7 @@ export default function MessagesScreen() {
         );
       }
     } catch (error) {
+      setIsThinking(false);
       console.error("AWS Request Error:", error);
     }
   };
@@ -539,6 +550,21 @@ export default function MessagesScreen() {
   );
 
   if (selectedChat) {
+    // Combine messages and "thinking" message if needed
+    const messagesToShow = isThinking
+      ? [
+          ...selectedChat.messages,
+          {
+            sender: 0,
+            content: "We're Thinking, give us a sec ...",
+            timestamp: new Date(),
+            read: false,
+            reactions: [],
+            isThinking: true,
+          },
+        ]
+      : selectedChat.messages;
+
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.background }]}
@@ -578,7 +604,7 @@ export default function MessagesScreen() {
         {/* Messages */}
         <FlatList
           ref={flatListRef}
-          data={selectedChat.messages}
+          data={messagesToShow}
           renderItem={renderMessage}
           keyExtractor={(item, index) => index.toString()}
           style={styles.messagesList}
