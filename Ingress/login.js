@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   signUpLink: {
-    color: "#F2F3F4",
+    color: "#1E90FF", // Changed from "#F2F3F4" to match the button color
   },
   errorText: {
     color: "red",
