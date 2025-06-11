@@ -18,6 +18,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { BarChart } from "react-native-chart-kit";
+import { useNavigation } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -40,6 +41,7 @@ const STOCK_PHOTOS = [
 ];
 
 export default function ProfileScreen() {
+  const navigation = useNavigation(); // Add this line
   const [activeTab, setActiveTab] = useState("Stats");
   const [statsView, setStatsView] = useState("Monthly");
   const [showEditModal, setShowEditModal] = useState(false);
@@ -69,7 +71,7 @@ export default function ProfileScreen() {
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
-      { text: "Logout", onPress: () => console.log("User logged out") },
+      { text: "Logout", onPress: () => navigation.navigate("Login") },
     ]);
   };
 
@@ -223,7 +225,7 @@ export default function ProfileScreen() {
           <View style={styles.headerTop}>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation.navigate("Home")}
+              onPress={() => navigation.goBack()}
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
@@ -455,7 +457,7 @@ export default function ProfileScreen() {
 
               <TouchableOpacity
                 style={styles.logoutButton}
-                onPress={handleLogout}
+                onPress={() => navigation.navigate("Home")}
               >
                 <Text style={styles.logoutButtonText}>Logout</Text>
               </TouchableOpacity>
@@ -505,12 +507,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
+    
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    paddingTop: 20,
+    paddingTop: "5%",
     paddingBottom: 30,
     paddingHorizontal: 20,
   },

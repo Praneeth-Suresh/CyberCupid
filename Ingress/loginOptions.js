@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'; // Import React, useEffect and useRef
 import { Modal, Animated, View, Text, Pressable, StyleSheet, StatusBar as NativeStatusBar, Platform, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = ({ navigation }) => {
   return (
@@ -17,23 +18,23 @@ const LoginScreen = ({ navigation }) => {
       <View style={login_styles.loginOptions}>
         {/* Google Login */}
         <Pressable
-          onPress={() => navigation.navigate("LoginGoogle")}
-          style={login_styles.loginButton}
+          // onPress={() => navigation.navigate("LoginGoogle")}
+          // style={login_styles.loginButton}
         >
-          <View style={login_styles.buttonContent}>
+          {/* <View style={login_styles.buttonContent}>
             <Text style={login_styles.buttonIcon}>G</Text>
             <Text style={login_styles.buttonText}>LOGIN WITH GOOGLE</Text>
-          </View>
+          </View> */}
         </Pressable>
 
         {/* Email Login */}
         <Pressable
-          onPress={() => navigation.navigate("LoginEmail")}
+          onPress={() => navigation.navigate("SignUp")}
           style={login_styles.loginButton}
         >
           <View style={login_styles.buttonContent}>
-            <Text style={login_styles.buttonIcon}>f</Text>
-            <Text style={login_styles.buttonText}>LOGIN WITH EMAIL</Text>
+            {/* <View style={login_styles.buttonIcon}><Ionicons name="call-outline" size={27} color="#f2f3f4"></Ionicons></View> */}
+            <Text style={login_styles.buttonText}>CREATE ACCOUNT</Text>
           </View>
         </Pressable>
 
@@ -43,8 +44,8 @@ const LoginScreen = ({ navigation }) => {
           style={login_styles.loginButton}
         >
           <View style={login_styles.buttonContent}>
-            <Text style={login_styles.buttonIcon}>↔</Text>
-            <Text style={login_styles.buttonText}>LOGIN WITH PHONE</Text>
+            {/* <Text style={login_styles.buttonIcon}><Ionicons name="call-outline" size={27} color="#f2f3f4"></Ionicons></Text> */}
+            <Text style={login_styles.buttonText}>SIGN IN</Text>
           </View>
         </Pressable>
       </View>
@@ -69,6 +70,7 @@ const login_styles = StyleSheet.create({
     padding: 20,
     height: 5,
     justifyContent: "space-between",
+    paddingTop: "5%",
   },
   headerText: {
     textAlign: "center",
@@ -80,7 +82,7 @@ const login_styles = StyleSheet.create({
     alignSelf: "center",
   },
   linkText: {
-    color: "#FFD700", // Gold for contrast
+    color: "#F2F3F4",
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
@@ -90,9 +92,9 @@ const login_styles = StyleSheet.create({
     alignItems: "center",
   },
   loginButton: {
-    borderWidth: 2,
+    borderWidth: 0,
     borderColor: "#B39DDB", // Lighter purple
-    borderRadius: 12,
+    borderRadius: 50,
     paddingVertical: 18,
     marginBottom: 18,
     backgroundColor: "#8F5FE8", // Medium purple
@@ -100,7 +102,7 @@ const login_styles = StyleSheet.create({
     alignSelf: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.35,
     shadowRadius: 4,
     elevation: 3,
   },
@@ -112,12 +114,13 @@ const login_styles = StyleSheet.create({
   buttonIcon: {
     fontSize: 24,
     fontWeight: "bold",
+    marginTop: 2,
     marginRight: 14,
     color: "#FFD700", // Gold
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "light",
     textTransform: "uppercase",
     color: "#FFF", // White for contrast
     letterSpacing: 1,
@@ -133,7 +136,7 @@ const login_styles = StyleSheet.create({
     color: "#E0D7F7", // Light lavender
   },
   signupLink: {
-    color: "#FFD700", // Gold
+    color: "#F2F3F4", // light grey
     fontWeight: "bold",
     textDecorationLine: "underline",
   },

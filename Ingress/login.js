@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     paddingHorizontal: 20,
+    paddingTop: "5%",
   },
   logo: {
     height: 200,
@@ -159,10 +160,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   signUp: {
-    color: "#000",
+    color: "#F2F3F4",
   },
   signUpLink: {
-    color: "#F2F3F4",
+    color: "#F2F3F4",  // Changed to very light gray
   },
   errorText: {
     color: "red",

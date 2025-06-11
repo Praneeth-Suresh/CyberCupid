@@ -17,7 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function PhotoUpload({ navigation }) {
-  const [photos, setPhotos] = useState(Array(6).fill(null));
+  const [photos, setPhotos] = useState(Array(4).fill(null));
 
   const requestPermissions = async () => {
     const { status: cameraStatus } =
