@@ -12,7 +12,8 @@ import logo from "../assets/logo.png";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Formik } from "formik";
 import * as yup from "yup";
-import MainApp;
+import MainApp from '../MainApp/MainAppNav';
+import PhotoVerification from '../SetUp/PhotoVerification';
 // import { useAuth } from "../auth/authContext"; // Change this in the future to support real authentication
 
 // 1. Validation: Use phone number instead of email
@@ -86,7 +87,7 @@ export default function LoginPhone({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("MainApp")}
+              onPress={() => navigation.navigate("photoVerification")}
               disabled={!isValid}
             >
               <Text style={styles.buttonText}>Login</Text>
