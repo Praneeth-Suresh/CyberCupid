@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import * as yup from "yup";
+import { Ionicons } from "@expo/vector-icons";
 // import { useAuth } from "../auth/authContext"; // Change this in the future to support real authentication
 
 const loginValidationSchema = yup.object().shape({
@@ -35,6 +36,9 @@ export default function Login({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size="100" color="#000000" ></Ionicons>
+      </TouchableOpacity>
       <Image source={logo} style={styles.logo} />
       <Text style={styles.title}>Sign Up</Text>
       <Formik
@@ -80,9 +84,7 @@ export default function Login({ navigation }) {
             {errors.password && touched.password && (
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
-            <TouchableOpacity onPress={() => navigation.navigate("LoginPhone")}>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.button}
               onPress={() => navigation.navigate("SetUp")}
@@ -90,12 +92,13 @@ export default function Login({ navigation }) {
             >
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Text style={styles.signUp}>
-                Don't have an account?{" "}
-                <Text style={styles.signUpLink}>You are on the right page</Text>
+                Already have an account?{" "}
+                <Text style={styles.signUpLink}>Login</Text>
               </Text>
             </TouchableOpacity>
+
           </>
         )}
       </Formik>
@@ -103,12 +106,14 @@ export default function Login({ navigation }) {
   );
 }
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#E0D7F7",
     paddingHorizontal: 20,
   },
   logo: {
@@ -168,5 +173,8 @@ const styles = StyleSheet.create({
     color: "red",
     alignSelf: "flex-start",
     marginBottom: 10,
+  },
+  backButton: {
+    marginRight: 12,
   },
 });
