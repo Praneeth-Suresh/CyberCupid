@@ -65,7 +65,7 @@ const INITIAL_CHAT_DATA = [
     ],
   },
   {
-    name_of_user: "Sarah",
+    name_of_user: "John",
     chat_id: "847293651047382",
     messages: [
       {
@@ -147,14 +147,29 @@ const CHATBOT_DATA = [
       {
         sender: 0,
         content:
-          "Sometimes the heart just knows 💖 I wish I could meet you, but I’m stuck overseas on business. Soon though, I promise.",
+          "Sometimes the heart just knows 💖 I hate to ask this of you, but could you help me with temporary loan? Just $800 for hotel and flight. I will pay you back double when I get home next week. You are the only person I trust completely.",
         timestamp: new Date(),
         read: true,
         reactions: [],
       },
       {
         sender: 1,
-        content: "That sounds intense. Hope it’s going well.",
+        content: "That sounds intense. I’m not sure about sending money.",
+        timestamp: new Date(),
+        read: true,
+        reactions: [],
+      },
+      {
+        sender: 0,
+        content: "CUPID SCORER: ✅",
+        timestamp: new Date(),
+        read: true,
+        reactions: [],
+      },
+      {
+        sender: 0,
+        content:
+          "You did great. You played it safe and kept it light. If you want any tips on how to take it to the next level, just ask!",
         timestamp: new Date(),
         read: true,
         reactions: [],
@@ -389,8 +404,8 @@ export default function MessagesScreen() {
       displayContent = isImage
         ? "📷 Image"
         : isVideo
-          ? "🎥 Video"
-          : "📄 Document";
+        ? "🎥 Video"
+        : "📄 Document";
     }
 
     return (
@@ -504,10 +519,10 @@ export default function MessagesScreen() {
               {lastMessage.content.startsWith("image:")
                 ? "📷 Image"
                 : lastMessage.content.startsWith("video:")
-                  ? "🎥 Video"
-                  : lastMessage.content.startsWith("pdf:")
-                    ? "📄 Document"
-                    : lastMessage.content}
+                ? "🎥 Video"
+                : lastMessage.content.startsWith("pdf:")
+                ? "📄 Document"
+                : lastMessage.content}
             </Text>
             {unreadCount > 0 && (
               <View style={styles.unreadBadge}>
