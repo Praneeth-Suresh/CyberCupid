@@ -1,40 +1,26 @@
 # CyberCupid
 
-SECURE HEARTS. REAL CONNECTIONS.
+CyberCupid is a team design and app prototype exploring how dating apps could teach people to recognize scams. This is not a live dating service or a security product.
 
-![CyberCupid Home](image.png)
+[View the Figma prototype](https://www.figma.com/proto/AdUATcNx7QBhDYFt6TvAVM/Brainhack_Codeexp_datingapp?node-id=2-1003&p=f&scaling=scale-down&content-scaling=fixed&page-id=0%3A1)
 
-People searching for companionship online presents a prime opportunity for cybercriminals to play on emotions and exploit vulnerabilities. **CyberCupid** is how we secure this battleground. Protection is not just an afterthought, it defines the application.
+![CyberCupid home screen mockup](image.png)
 
-Get your hands on our prototype at [https://www.figma.com/proto/AdUATcNx7QBhDYFt6TvAVM/Brainhack_Codeexp_datingapp?node-id=2-1003&amp;p=f&amp;t=eAkC5QR8CdLyFQve-1&amp;scaling=scale-down&amp;content-scaling=fixed&amp;page-id=0%3A1](https://www.figma.com/proto/AdUATcNx7QBhDYFt6TvAVM/Brainhack_Codeexp_datingapp?node-id=2-1003&p=f&t=eAkC5QR8CdLyFQve-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1)
+## What to look at
 
-## Getting started
+- [Onboarding and demo sign-in screens](Ingress/)
+- [Education screens](MainApp/Screens/EducationScreens.js) and [Security Dash](MainApp/Screens/GameComponents/SecurityDashGame.js)
+- [Photo-selection UI](SetUp/PhotoUpload.js), which can request local camera or gallery permission
 
-To get the project started from scratch, follow these steps:
+Authentication, identity verification, and scam protection are not implemented. Use fictional details and sample images only. Use the Figma walkthrough if you just want to see the design.
 
-1. Install NodeJS and NPM from https://nodejs.org/en
-2. Clone the repo using `git clone` on terminal
-3. Run the following commands when inside `CyberCupid`
+## Local development
 
-   ```powershell
-   npm install -g npm@latest
-   npm install expo@latest
-   npx expo install
-   npx expo start
-   ```
+With Node.js and npm installed, run from the repository root:
 
-## Roadmap
+```bash
+npm ci
+npm start
+```
 
-While our idea does a lot to get the message about prudence on the internet, it could have a stronger impact. Here are a few features we aim to implement going forward.
-
-### Threat Simulation
-
-The goal is to simulate realistic attacks on out users to build their readiness to defend themselves when its a real attack.
-
-### Cross platform defense
-
-Our edge technology can be integrated into other social media applications users employ to be a full-time digital bodyguard.
-
-### Making calls
-
-This allows us to defend another communication dimension, providing more all round security.
+This uses the Expo version recorded in the repository. Device or emulator behavior can depend on which native packages are available in the selected client.

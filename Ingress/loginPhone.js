@@ -28,10 +28,6 @@ const loginValidationSchema = yup.object().shape({
     .required("Password is required"),
 });
 
-const submit = (args) => {
-  console.log(args);
-};
-
 export default function LoginPhone({ navigation }) {
   // const { token, user, saveToken, saveUser } = useAuth();
 
@@ -42,12 +38,11 @@ export default function LoginPhone({ navigation }) {
       <Formik
         validationSchema={loginValidationSchema}
         initialValues={{ phone: "", password: "" }} // 2. Use phone instead of email
-        onSubmit={submit}
+        onSubmit={() => {}}
       >
         {({
           handleChange,
           handleBlur,
-          handleSubmit,
           values,
           errors,
           touched,
@@ -87,7 +82,7 @@ export default function LoginPhone({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("photoVerification")}
+              onPress={() => navigation.navigate("SetUp")}
               disabled={!isValid}
             >
               <Text style={styles.buttonText}>Login</Text>
