@@ -27,10 +27,6 @@ const loginValidationSchema = yup.object().shape({
     .required("Password is required"),
 });
 
-const submit = (args) => {
-  console.log(args);
-};
-
 export default function Login({ navigation }) {
   // const { token, user, saveToken, saveUser } = useAuth();
 
@@ -45,12 +41,11 @@ export default function Login({ navigation }) {
       <Formik
         validationSchema={loginValidationSchema}
         initialValues={{ email: "", password: "" }}
-        onSubmit={submit}
+        onSubmit={() => {}}
       >
         {({
           handleChange,
           handleBlur,
-          handleSubmit,
           values,
           errors,
           touched,
@@ -93,7 +88,7 @@ export default function Login({ navigation }) {
             >
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <TouchableOpacity onPress={() => navigation.navigate("LoginEmail")}>
               <Text style={styles.signUp}>
                 Already have an account?{" "}
                 <Text style={styles.signUpLink}>Login</Text>
